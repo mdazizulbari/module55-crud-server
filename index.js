@@ -33,11 +33,34 @@ async function run() {
       response.send(result);
     });
 
+    app.get("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: new ObjectId(id) };
+      const result = await usersCollection.findOne(query);
+      res.send(result);
+    });
+
     app.post("/users", async (request, response) => {
       console.log("data in the server", request.body);
       const newUser = request.body;
       const result = await usersCollection.insertOne(newUser);
       response.send(result);
+    });
+
+    app.put("/users/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: new ObjectId(id) };
+      const user = req.body;
+      const updateDoc = {
+        $set: { name: user.name, email: user.email },
+      };
+      const options = { upset: true };
+      console.log(user);
+      const result = await usersCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
     });
 
     app.delete("/users/:id", async (req, res) => {
